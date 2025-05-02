@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+
+
+<?import java.lang.String?>
+<AnchorPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.svalero.aa1_imageeditor_tatiana.controller.FilterController"
+            prefHeight="500.0" prefWidth="800.0"
+            style="-fx-background-color: #f4f4f4;">
+
+  <!-- Botones superiores -->
+  <HBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10">
+    <Button fx:id="loadImageButton" text="Cargar Imagen" onAction="#loadImage" />
+    <Button fx:id="saveButton" text="Guardar Imagen" onAction="#saveImage" />
+    <Button text="Restaurar Original" onAction="#resetToOriginal" />
+    <Button text="Procesar Carpeta" onAction="#processBatchFolder" />
+    <Button text="Abrir Carpeta Procesadas"
+            onAction="#openProcessedFolder"
+            style="-fx-background-color: #3F51B5; -fx-text-fill: white;" />
+    <Button text="⮪ Deshacer"
+            onAction="#undoLastFilter"
+            style="-fx-background-color: #E57373; -fx-text-fill: white;" />
+
+    <Button text="🕓 Revertir Versión"
+            onAction="#revertToPreviousVersion"
+            style="-fx-background-color: #9FA8DA; -fx-text-fill: white;" />
+  </HBox>
+
+  <!-- Imágenes -->
+  <HBox spacing="30" AnchorPane.topAnchor="60" AnchorPane.leftAnchor="10">
+  <VBox spacing="10">
+      <Label text="Imagen Original" />
+      <ImageView fx:id="originalImageView" fitHeight="250" fitWidth="250" preserveRatio="true" />
+    </VBox>
+    <VBox spacing="10">
+      <Label text="Imagen Procesada" />
+      <ImageView fx:id="processedImageView" fitHeight="250" fitWidth="250" preserveRatio="true" />
+    </VBox>
+  </HBox>
+
+  <!-- Botones de filtros -->
+  <HBox spacing="10" AnchorPane.leftAnchor="10" AnchorPane.bottomAnchor="60">
+    <ComboBox fx:id="filterSelector" prefWidth="150">
+      <items>
+        <FXCollections fx:factory="observableArrayList">
+          <String fx:value="Escala de Grises"/>
+          <String fx:value="Inversión de Color"/>
+          <String fx:value="Aumento de Brillo"/>
+        </FXCollections>
+      </items>
+    </ComboBox>
+    <Label text="Hilos Concurrentes:" />
+    <Spinner fx:id="threadSpinner" prefWidth="80" />
+
+    <Button text="Aplicar Filtro" onAction="#applySelectedFilter" />
+  </HBox>
+
+  <!-- Barra de progreso y estado -->
+  <VBox spacing="10" AnchorPane.leftAnchor="10" AnchorPane.bottomAnchor="10">
+    <ProgressBar fx:id="progressBar" prefWidth="400" />
+    <Label fx:id="lbStatus" text="Estado..." />
+  </VBox>
+
+  <!-- Historial -->
+  <VBox AnchorPane.topAnchor="60" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="90" spacing="10">
+    <Label text="Historial de Operaciones" />
+    <ListView fx:id="historyList" prefWidth="250" />
+    <Button text="Borrar Historial"
+            onAction="#clearHistory"
+            style="-fx-background-color: #B71C1C; -fx-text-fill: white;" />
+  </VBox>
+
+
+</AnchorPane>

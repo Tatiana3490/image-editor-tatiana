@@ -1,6 +1,7 @@
 package com.svalero.aa1_imageeditor_tatiana.controller;
 
 import com.svalero.aa1_imageeditor_tatiana.filters.*;
+import com.svalero.aa1_imageeditor_tatiana.service.FilterService;
 import com.svalero.aa1_imageeditor_tatiana.task.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -129,37 +130,32 @@ public class FilterController {
             return;
         }
 
-        // Guardar el estado actual antes de aplicar el nuevo filtro
+        // Guardar el estado anterior para deshacer
         undoStack.push(currentImage);
         historyImages.add(currentImage);
 
-        FilterTask taskLogic = new FilterTask(currentImage, filter);
+        // Crear y configurar el servicio
+        FilterService filterService = new FilterService(currentImage, filter);
 
-        Task<BufferedImage> task = new Task<>() {
-            @Override
-            protected BufferedImage call() throws Exception {
-                updateProgress(0.2, 1);
-                BufferedImage result = taskLogic.call();
-                updateProgress(1, 1);
-                return result;
-            }
-        };
+        progressBar.progressProperty().bind(filterService.progressProperty());
 
-        task.setOnSucceeded(event -> {
-            currentImage = task.getValue();
-            processedImageView.setImage(SwingFXUtils.toFXImage(currentImage, null));
+        filterService.setOnSucceeded(event -> {
+            BufferedImage output = filterService.getValue();
+            currentImage = output;
+            processedImageView.setImage(SwingFXUtils.toFXImage(output, null));
             updateStatus("Filtro aplicado: " + name);
             addHistoryEntry("Filtro aplicado: " + name);
         });
 
-        task.setOnFailed(event -> {
+        filterService.setOnFailed(event -> {
             updateStatus("Error al aplicar el filtro.");
             addHistoryEntry("Error con filtro: " + name);
         });
 
-        progressBar.progressProperty().bind(task.progressProperty());
-        executorService.submit(task);
+        // Ejecutar el servicio
+        filterService.start();
     }
+
 
 
     @FXML
@@ -206,6 +202,8 @@ public class FilterController {
         ExecutorService customPool = Executors.newFixedThreadPool(threadCount);
         updateStatus("Procesando " + files.length + " imágenes con " + threadCount + " hilos...");
 
+        long startTime = System.currentTimeMillis(); // ⏱️ Marca el inicio
+
         for (File file : files) {
             customPool.submit(() -> {
                 try {
@@ -230,8 +228,28 @@ public class FilterController {
                 }
             });
         }
-
         new Thread(() -> {
+            customPool.shutdown();
+            try {
+                if (customPool.awaitTermination(2, java.util.concurrent.TimeUnit.MINUTES)) {
+                    long endTime = System.currentTimeMillis(); // ⏱️ Fin
+                    long elapsed = endTime - startTime;
+
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Procesamiento finalizado");
+                        alert.setHeaderText("Tiempo total: " + elapsed + " ms");
+                        alert.setContentText("Todas las imágenes han sido procesadas con " + threadCount + " hilos.");
+                        alert.showAndWait();
+                    });
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
+      /*  new Thread(() -> {
             customPool.shutdown();
             try {
                 if (customPool.awaitTermination(1, java.util.concurrent.TimeUnit.MINUTES)) {
@@ -246,7 +264,7 @@ public class FilterController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
 
     }
 

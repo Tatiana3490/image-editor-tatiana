@@ -26,7 +26,7 @@
             onAction="#undoLastFilter"
             style="-fx-background-color: #E57373; -fx-text-fill: white;" />
 
-    <Button text="🕓 Revertir Versión"
+    <Button text="Revertir Versión"
             onAction="#revertToPreviousVersion"
             style="-fx-background-color: #9FA8DA; -fx-text-fill: white;" />
   </HBox>

@@ -152,7 +152,7 @@ public class FilterController {
             addHistoryEntry("Error con filtro: " + name);
         });
 
-        // Ejecutar el servicio
+
         filterService.start();
     }
 
@@ -228,12 +228,12 @@ public class FilterController {
                 }
             });
         }
-        /* Para comprobar los ms que tarda el proceso de los hilos */
-       /* new Thread(() -> {
+        //Para comprobar los ms que tarda el proceso de los hilos */
+        new Thread(() -> {
             customPool.shutdown();
             try {
                 if (customPool.awaitTermination(2, java.util.concurrent.TimeUnit.MINUTES)) {
-                    long endTime = System.currentTimeMillis(); // ⏱️ Fin
+                    long endTime = System.currentTimeMillis(); //  Fin
                     long elapsed = endTime - startTime;
 
                     Platform.runLater(() -> {
@@ -247,10 +247,10 @@ public class FilterController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();*/
+        }).start();
 
 
-       new Thread(() -> {
+     /*  new Thread(() -> {
             customPool.shutdown();
             try {
                 if (customPool.awaitTermination(1, java.util.concurrent.TimeUnit.MINUTES)) {
@@ -265,7 +265,7 @@ public class FilterController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }).start();
+        }).start();*/
 
     }
 

@@ -202,7 +202,7 @@ public class FilterController {
         ExecutorService customPool = Executors.newFixedThreadPool(threadCount);
         updateStatus("Procesando " + files.length + " imágenes con " + threadCount + " hilos...");
 
-        long startTime = System.currentTimeMillis(); // ⏱️ Marca el inicio
+        long startTime = System.currentTimeMillis(); //  Marca el inicio
 
         for (File file : files) {
             customPool.submit(() -> {
